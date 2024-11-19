@@ -15,10 +15,12 @@ const Login = () => {
     }
     const navigate = useNavigate();
     const APP_URI = import.meta.env.VITE_APP_URL;
+    const token = JSON.parse(localStorage.getItem("token"));
     const submitForm = async (e) => {
         try {
             e.preventDefault();
-            const res = await axios.post(`${APP_URI}/login`, { email, password });
+            axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+            const res = await axios.post(`${APP_URI}/api/v1/login`, { email, password });
             if (res.data.success === true) {
                 console.log("Login successful!");
                 console.log(res.data);
