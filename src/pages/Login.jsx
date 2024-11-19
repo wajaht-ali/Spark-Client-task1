@@ -2,11 +2,38 @@
 import { useState } from "react";
 import img from "../assets/Vehicle_IMG.png";
 import { RiArrowLeftSLine } from "react-icons/ri";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
 
 const Login = () => {
     const [checked, setChecked] = useState(false);
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
     const onCheck = () => {
         setChecked(!checked);
+    }
+    const navigate = useNavigate();
+    const APP_URI = import.meta.env.VITE_APP_URL;
+    const submitForm = async (e) => {
+        try {
+            e.preventDefault();
+            const res = await axios.post(`${APP_URI}/login`, { email, password });
+            if (res.data.success === true) {
+                console.log("Login successful!");
+                console.log(res.data);
+                localStorage.setItem("token", JSON.stringify(res.data.token));
+                localStorage.setItem("userId", JSON.stringify(res.data.userId));
+                setEmail("");
+                setPassword("");
+                navigate("/");
+            } else {
+                console.log("Login failed!");
+                alert(res.data.message);
+            }
+        } catch (err) {
+            console.log(`Error with form submission! ${err}`);
+        }
     }
     return (
         <div className="h-screen w-full flex flex-col-reverse md:flex-row justify-center items-center">
@@ -23,16 +50,16 @@ const Login = () => {
                         <span className="mx-4 text-gray-500">or</span>
                         <hr className="flex-grow border-gray-300" />
                     </div>
-                    <form className="w-auto md:w-full">
+                    <form onSubmit={submitForm} className="w-auto md:w-full">
                         <div className="w-full h-[77px] flex flex-col items-start justify-start gap-y-2">
                             <label className="after:" htmlFor="Email">Email <span className="text-primary">*</span></label>
                             <input className="w-full rounded-[16px] border-[1px] h-[50px] p-4
-                            " type="email" name="email" id="email" placeholder="mail@simmmmple.com" />
+                            " type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="mail@simmmmple.com" required />
                         </div>
                         <div className="w-full h-[77px] flex flex-col items-start justify-start  my-6 gap-y-2">
                             <label htmlFor="Email">Password <span className="text-primary">*</span></label>
                             <input className="w-full rounded-[16px] border-[1px] h-[50px] p-4
-                            " type="email" name="email" id="password" placeholder="Min. 8 characters" />
+                            " type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Min. 8 characters" required />
                         </div>
                         <div className="w-auto md:w-full h-[77px] flex justify-between items-center my-6 gap-y-2">
                             <span className="flex flex-row items-center justify-center">
