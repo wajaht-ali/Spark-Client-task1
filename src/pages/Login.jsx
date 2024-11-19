@@ -28,7 +28,7 @@ const Login = () => {
                 localStorage.setItem("userId", JSON.stringify(res.data.userId));
                 setEmail("");
                 setPassword("");
-                navigate("/");
+                navigate("/home");
             } else {
                 console.log("Login failed!");
                 alert(res.data.message);
